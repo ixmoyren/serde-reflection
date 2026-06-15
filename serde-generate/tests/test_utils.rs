@@ -612,10 +612,12 @@ fn test_get_sample_values() {
 #[test]
 fn test_get_simple_registry() {
     let registry = get_simple_registry().unwrap();
-    assert_eq!(
-        serde_yaml::to_string(&registry).unwrap(),
-        r#"---
-Choice:
+    let option = serde_saphyr::ser_options! {
+        compact_list_indent: false,
+    };
+    similar_asserts::assert_eq!(
+        serde_saphyr::to_string_with_options(&registry, option).unwrap(),
+        r#"Choice:
   ENUM:
     0:
       A: UNIT
@@ -643,8 +645,7 @@ Test:
 #[test]
 fn test_get_registry() {
     let registry = get_registry().unwrap();
-    let expected = r#"---
-CStyleEnum:
+    let expected = r#"CStyleEnum:
   ENUM:
     0:
       A: UNIT
@@ -799,7 +800,7 @@ SimpleList:
 Struct:
   STRUCT:
     - x: U32
-    - y: U64
+    - "y": U64
 Tree:
   STRUCT:
     - value:
@@ -815,8 +816,11 @@ UnitStruct: UNITSTRUCT
 "#
     .lines()
     .collect::<Vec<_>>();
-    assert_eq!(
-        serde_yaml::to_string(&registry)
+    let option = serde_saphyr::ser_options! {
+        compact_list_indent: false,
+    };
+    similar_asserts::assert_eq!(
+        serde_saphyr::to_string_with_options(&registry, option)
             .unwrap()
             .lines()
             .collect::<Vec<_>>(),

@@ -131,7 +131,11 @@ fn test_that_installed_python_code_parses() {
     let registry = test_utils::get_registry().unwrap();
     let dir = tempdir().unwrap();
     let yaml_path = dir.path().join("test.yaml");
-    std::fs::write(yaml_path.clone(), serde_yaml::to_string(&registry).unwrap()).unwrap();
+    std::fs::write(
+        yaml_path.clone(),
+        serde_saphyr::to_string(&registry).unwrap(),
+    )
+    .unwrap();
 
     let status = Command::new("cargo")
         .arg("run")
@@ -174,7 +178,11 @@ fn test_that_installed_python_code_with_package_parses() {
     let registry = test_utils::get_registry().unwrap();
     let dir = tempdir().unwrap();
     let yaml_path = dir.path().join("test.yaml");
-    std::fs::write(yaml_path.clone(), serde_yaml::to_string(&registry).unwrap()).unwrap();
+    std::fs::write(
+        yaml_path.clone(),
+        serde_saphyr::to_string(&registry).unwrap(),
+    )
+    .unwrap();
 
     let status = Command::new("cargo")
         .arg("run")
@@ -227,7 +235,11 @@ fn test_that_installed_rust_code_compiles() {
     let registry = test_utils::get_registry().unwrap();
     let dir = tempdir().unwrap();
     let yaml_path = dir.path().join("test.yaml");
-    std::fs::write(yaml_path.clone(), serde_yaml::to_string(&registry).unwrap()).unwrap();
+    std::fs::write(
+        yaml_path.clone(),
+        serde_saphyr::to_string(&registry).unwrap(),
+    )
+    .unwrap();
 
     let status = Command::new("cargo")
         .arg("run")
@@ -262,7 +274,7 @@ fn create_test_yaml() {
     let registry = test_utils::get_registry().unwrap();
     let dir = tempdir().unwrap();
     let yaml_path = dir.path().join("test.yaml");
-    std::fs::write(yaml_path, serde_yaml::to_string(&registry).unwrap()).unwrap();
+    std::fs::write(yaml_path, serde_saphyr::to_string(&registry).unwrap()).unwrap();
 }
 
 #[cfg(feature = "cpp")]
@@ -271,7 +283,11 @@ fn test_that_installed_cpp_code_compiles() {
     let registry = test_utils::get_registry().unwrap();
     let dir = tempdir().unwrap();
     let yaml_path = dir.path().join("test.yaml");
-    std::fs::write(yaml_path.clone(), serde_yaml::to_string(&registry).unwrap()).unwrap();
+    std::fs::write(
+        yaml_path.clone(),
+        serde_saphyr::to_string(&registry).unwrap(),
+    )
+    .unwrap();
 
     let status = Command::new("cargo")
         .arg("run")
@@ -311,7 +327,11 @@ fn test_that_installed_java_code_compiles() {
     let registry = test_utils::get_registry().unwrap();
     let dir = tempdir().unwrap();
     let yaml_path = dir.path().join("test.yaml");
-    std::fs::write(yaml_path.clone(), serde_yaml::to_string(&registry).unwrap()).unwrap();
+    std::fs::write(
+        yaml_path.clone(),
+        serde_saphyr::to_string(&registry).unwrap(),
+    )
+    .unwrap();
 
     let status = Command::new("cargo")
         .arg("run")
@@ -365,7 +385,11 @@ fn test_that_installed_ocaml_code_compiles() {
     let registry = test_utils::get_registry().unwrap();
     let dir = tempdir().unwrap();
     let yaml_path = dir.path().join("test.yaml");
-    std::fs::write(yaml_path.clone(), serde_yaml::to_string(&registry).unwrap()).unwrap();
+    std::fs::write(
+        yaml_path.clone(),
+        serde_saphyr::to_string(&registry).unwrap(),
+    )
+    .unwrap();
 
     let status = Command::new("cargo")
         .arg("run")

@@ -159,7 +159,7 @@ fn main() {
                     .into_owned()
             });
             let content = std::fs::read_to_string(input).expect("input file must be readable");
-            let registry = serde_yaml::from_str::<Registry>(content.as_str()).unwrap();
+            let registry = serde_saphyr::from_str::<Registry>(content.as_str()).unwrap();
             Some((registry, name))
         }
     };
