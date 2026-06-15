@@ -51,9 +51,11 @@
 //!
 //! // Obtain the registry of Serde formats and serialize it in YAML (for instance).
 //! let registry = tracer.registry()?;
-//! let data = serde_yaml::to_string(&registry).unwrap();
-//! assert_eq!(&data, r#"---
-//! Bar:
+//! let option = serde_saphyr::ser_options! {
+//!         compact_list_indent: false,
+//!  };
+//! let data = serde_saphyr::to_string_with_options(&registry, option).unwrap();
+//! assert_eq!(&data, r#"Bar:
 //!   NEWTYPESTRUCT: U64
 //! Choice:
 //!   ENUM:
@@ -216,9 +218,11 @@
 //! };
 //!
 //! // Export the registry in YAML.
-//! let data = serde_yaml::to_string(&registry).unwrap();
-//! assert_eq!(&data, r#"---
-//! Name:
+//! let option = serde_saphyr::ser_options! {
+//!         compact_list_indent: false,
+//!  };
+//! let data = serde_saphyr::to_string(&registry).unwrap();
+//! assert_eq!(&data, r#"Name:
 //!   NEWTYPESTRUCT: STR
 //! Person:
 //!   ENUM:
