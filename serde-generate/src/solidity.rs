@@ -5,8 +5,9 @@ use crate::{
     indent::{IndentConfig, IndentedWriter},
     CodeGeneratorConfig,
 };
-use heck::SnakeCase;
+use heck::ToSnakeCase;
 use phf::phf_set;
+use serde_reflection::Format::{TupleArray, TypeName};
 use serde_reflection::{ContainerFormat, Format, Named, Registry, VariantFormat};
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},

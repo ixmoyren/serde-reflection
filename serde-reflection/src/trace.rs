@@ -9,10 +9,10 @@ use crate::{
     value::Value,
 };
 use erased_discriminant::Discriminant;
-use once_cell::sync::Lazy;
 use serde::{de::DeserializeSeed, Deserialize, Serialize};
 use std::any::TypeId;
 use std::collections::{BTreeMap, BTreeSet};
+use std::sync::LazyLock;
 
 /// A map of container formats.
 pub type Registry = BTreeMap<String, ContainerFormat>;
@@ -287,7 +287,7 @@ impl Tracer {
     where
         T: Deserialize<'de>,
     {
-        static SAMPLES: Lazy<Samples> = Lazy::new(Samples::new);
+        static SAMPLES: LazyLock<Samples> = LazyLock::new(Samples::new);
         self.trace_type(&SAMPLES)
     }
 

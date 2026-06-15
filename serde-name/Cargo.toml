@@ -10,15 +10,15 @@ readme = "README.md"
 keywords = ["data-structures", "serialization", "serde"]
 categories = ["encoding", "development-tools"]
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.85"
 exclude = [
     # Readme template that doesn't need to be included.
     "README.tpl",
 ]
 
 [dependencies]
-thiserror = "1.0.25"
-serde = { version = "1.0.126", features = ["derive"] }
+thiserror = "2.0"
+serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
 serde-reflection = { path = "../serde-reflection", version = "0.6.0" }

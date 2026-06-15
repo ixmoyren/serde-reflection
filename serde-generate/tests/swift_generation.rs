@@ -5,13 +5,11 @@ use crate::test_utils;
 use serde::{Deserialize, Serialize};
 use serde_generate::{swift, CodeGeneratorConfig, Encoding};
 use serde_reflection::{Registry, Result, Samples, Tracer, TracerConfig};
+use std::sync::LazyLock;
 use std::{collections::BTreeMap, fs::File, io::Write, process::Command, sync::Mutex};
 use tempfile::{tempdir, TempDir};
 
-lazy_static::lazy_static! {
-    // Avoid interleaving compiler calls because the output gets very messy.
-    static ref MUTEX: Mutex<()> = Mutex::new(());
-}
+static MUTEX: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
 
 #[derive(Serialize, Deserialize)]
 struct Test {

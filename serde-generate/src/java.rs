@@ -6,7 +6,7 @@ use crate::{
     indent::{IndentConfig, IndentedWriter},
     CodeGeneratorConfig, Encoding,
 };
-use heck::CamelCase;
+use heck::ToUpperCamelCase;
 use include_dir::include_dir as include_directory;
 use serde_reflection::{ContainerFormat, Format, FormatHolder, Named, Registry, VariantFormat};
 use std::{
@@ -871,7 +871,7 @@ public byte[] {0}Serialize() throws com.novi.serde.SerializationError {{
     return serializer.get_bytes();
 }}"#,
             encoding.name(),
-            encoding.name().to_camel_case()
+            encoding.name().to_upper_camel_case()
         )
     }
 
@@ -896,7 +896,7 @@ public static {0} {1}Deserialize(byte[] input) throws com.novi.serde.Deserializa
 }}"#,
             name,
             encoding.name(),
-            encoding.name().to_camel_case()
+            encoding.name().to_upper_camel_case()
         )
     }
 
@@ -966,21 +966,21 @@ impl crate::SourceInstaller for Installer {
 
     fn install_serde_runtime(&self) -> std::result::Result<(), Self::Error> {
         self.install_runtime(
-            include_directory!("runtime/java/com/novi/serde"),
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/java/com/novi/serde"),
             "com/novi/serde",
         )
     }
 
     fn install_bincode_runtime(&self) -> std::result::Result<(), Self::Error> {
         self.install_runtime(
-            include_directory!("runtime/java/com/novi/bincode"),
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/java/com/novi/bincode"),
             "com/novi/bincode",
         )
     }
 
     fn install_bcs_runtime(&self) -> std::result::Result<(), Self::Error> {
         self.install_runtime(
-            include_directory!("runtime/java/com/novi/bcs"),
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/java/com/novi/bcs"),
             "com/novi/bcs",
         )
     }

@@ -4,12 +4,10 @@
 use crate::test_utils;
 use crate::test_utils::{Choice, Runtime, Test};
 use serde_generate::{swift, CodeGeneratorConfig, SourceInstaller};
+use std::sync::LazyLock;
 use std::{fs::File, io::Write, process::Command, sync::Mutex};
 
-lazy_static::lazy_static! {
-    // Avoid interleaving compiler calls because the output gets very messy.
-    static ref MUTEX: Mutex<()> = Mutex::new(());
-}
+static MUTEX: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
 
 #[test]
 fn test_swift_runtime_autotests() {

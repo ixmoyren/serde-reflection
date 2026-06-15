@@ -3,13 +3,12 @@
 
 use crate::test_utils;
 use serde_generate::{csharp, CodeGeneratorConfig, Encoding};
+use std::sync::LazyLock;
 use std::{collections::BTreeMap, process::Command, sync::Mutex};
 use tempfile::{tempdir, TempDir};
 
-lazy_static::lazy_static! {
-    // `dotnet build` spuriously fails on linux if run concurrently
-    static ref MUTEX: Mutex<()> = Mutex::new(());
-}
+// `dotnet build` spuriously fails on linux if run concurrently
+static MUTEX: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
 
 fn test_that_csharp_code_compiles_with_config(
     config: &CodeGeneratorConfig,

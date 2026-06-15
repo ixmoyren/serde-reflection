@@ -6,7 +6,7 @@ use crate::{
     indent::{IndentConfig, IndentedWriter},
     CodeGeneratorConfig, Encoding,
 };
-use heck::CamelCase;
+use heck::ToUpperCamelCase;
 use serde_reflection::{ContainerFormat, Format, Named, Registry, VariantFormat};
 use std::{
     collections::{BTreeMap, HashMap, HashSet},
@@ -104,7 +104,7 @@ impl<'a> CodeGenerator<'a> {
 
 impl<'a, T> CppEmitter<'a, T>
 where
-    T: std::io::Write,
+    T: Write,
 {
     fn output_preamble(&mut self) -> Result<()> {
         writeln!(
@@ -151,7 +151,7 @@ where
         self.current_namespace.pop();
     }
 
-    fn output_comment(&mut self, name: &str) -> std::io::Result<()> {
+    fn output_comment(&mut self, name: &str) -> Result<()> {
         let mut path = self.current_namespace.clone();
         path.push(name.to_string());
         if let Some(doc) = self.generator.config.comments.get(&path) {
@@ -161,7 +161,7 @@ where
         Ok(())
     }
 
-    fn output_custom_code(&mut self) -> std::io::Result<()> {
+    fn output_custom_code(&mut self) -> Result<()> {
         if let Some(code) = self
             .generator
             .config
@@ -399,7 +399,7 @@ inline std::vector<uint8_t> {}::{}Serialize() const {{
 }}"#,
             name,
             encoding.name(),
-            encoding.name().to_camel_case(),
+            encoding.name().to_upper_camel_case(),
             name
         )
     }
@@ -423,7 +423,7 @@ inline {} {}::{}Deserialize(std::vector<uint8_t> input) {{
             name,
             name,
             encoding.name(),
-            encoding.name().to_camel_case(),
+            encoding.name().to_upper_camel_case(),
             name,
         )
     }
@@ -578,7 +578,7 @@ impl crate::SourceInstaller for Installer {
 
     fn install_module(
         &self,
-        config: &crate::CodeGeneratorConfig,
+        config: &CodeGeneratorConfig,
         registry: &Registry,
     ) -> std::result::Result<(), Self::Error> {
         let mut file = self.create_header_file(&config.module_name)?;

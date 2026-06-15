@@ -3,7 +3,7 @@
 
 use crate::test_utils;
 use crate::test_utils::{Choice, Runtime, Test};
-use heck::CamelCase;
+use heck::ToUpperCamelCase;
 use serde_generate::{golang, CodeGeneratorConfig};
 use std::{fs::File, io::Write, process::Command};
 use tempfile::tempdir;
@@ -86,7 +86,7 @@ func main() {{
             .map(|x| format!("{x}"))
             .collect::<Vec<_>>()
             .join(", "),
-        runtime.name().to_camel_case(),
+        runtime.name().to_upper_camel_case(),
     )
     .unwrap();
 
@@ -218,7 +218,7 @@ func main() {{
 "#,
         positive_encodings,
         negative_encodings,
-        runtime.name().to_camel_case(),
+        runtime.name().to_upper_camel_case(),
     )
     .unwrap();
 

@@ -6,8 +6,7 @@ use crate::{
     indent::{IndentConfig, IndentedWriter},
     CodeGeneratorConfig, Encoding,
 };
-use heck::CamelCase;
-use heck::SnakeCase;
+use heck::{ToSnakeCase, ToUpperCamelCase};
 use include_dir::include_dir as include_directory;
 use phf::phf_set;
 use serde_reflection::{ContainerFormat, Format, Named, Registry, VariantFormat};
@@ -316,7 +315,7 @@ where
                         value: VariantFormat::NewType(format.clone()),
                     },
                 );
-                self.output_enum(&name.to_camel_case(), &map, true)?;
+                self.output_enum(&name.to_upper_camel_case(), &map, true)?;
             }
             NewTypeStruct(format) => {
                 write!(self.out, " ")?;
@@ -334,7 +333,7 @@ where
                 writeln!(self.out)?;
             }
             Enum(variants) => {
-                self.output_enum(&name.to_camel_case(), variants, false)?;
+                self.output_enum(&name.to_upper_camel_case(), variants, false)?;
             }
         }
 
@@ -411,25 +410,67 @@ impl crate::SourceInstaller for Installer {
     }
 
     fn install_serde_runtime(&self) -> std::result::Result<(), Self::Error> {
-        self.install_runtime(include_directory!("runtime/ocaml/common"), "common")?;
-        self.install_runtime(include_directory!("runtime/ocaml/virtual"), "virtual")?;
-        self.install_runtime(include_directory!("runtime/ocaml/ppx"), "ppx")?;
-        self.install_runtime(include_directory!("runtime/ocaml/serde"), "serde")
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/common"),
+            "common",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/virtual"),
+            "virtual",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/ppx"),
+            "ppx",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/serde"),
+            "serde",
+        )
     }
 
     fn install_bincode_runtime(&self) -> std::result::Result<(), Self::Error> {
-        self.install_runtime(include_directory!("runtime/ocaml/common"), "common")?;
-        self.install_runtime(include_directory!("runtime/ocaml/virtual"), "virtual")?;
-        self.install_runtime(include_directory!("runtime/ocaml/ppx"), "ppx")?;
-        self.install_runtime(include_directory!("runtime/ocaml/serde"), "serde")?;
-        self.install_runtime(include_directory!("runtime/ocaml/bincode"), "bincode")
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/common"),
+            "common",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/virtual"),
+            "virtual",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/ppx"),
+            "ppx",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/serde"),
+            "serde",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/bincode"),
+            "bincode",
+        )
     }
 
     fn install_bcs_runtime(&self) -> std::result::Result<(), Self::Error> {
-        self.install_runtime(include_directory!("runtime/ocaml/common"), "common")?;
-        self.install_runtime(include_directory!("runtime/ocaml/virtual"), "virtual")?;
-        self.install_runtime(include_directory!("runtime/ocaml/ppx"), "ppx")?;
-        self.install_runtime(include_directory!("runtime/ocaml/serde"), "serde")?;
-        self.install_runtime(include_directory!("runtime/ocaml/bcs"), "bcs")
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/common"),
+            "common",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/virtual"),
+            "virtual",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/ppx"),
+            "ppx",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/serde"),
+            "serde",
+        )?;
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/ocaml/bcs"),
+            "bcs",
+        )
     }
 }

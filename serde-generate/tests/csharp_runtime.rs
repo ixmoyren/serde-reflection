@@ -3,8 +3,9 @@
 
 use crate::test_utils;
 use crate::test_utils::{Choice, Runtime, Test};
-use heck::CamelCase;
+use heck::ToUpperCamelCase;
 use serde_generate::{csharp, CodeGeneratorConfig, SourceInstaller};
+use std::sync::LazyLock;
 use std::{
     fs::File,
     io::Write,
@@ -13,10 +14,7 @@ use std::{
     sync::Mutex,
 };
 
-lazy_static::lazy_static! {
-    // `dotnet build` spuriously fails on linux if run concurrently
-    static ref MUTEX: Mutex<()> = Mutex::new(());
-}
+static MUTEX: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
 
 /// Returns:
 /// 1. A `PathBuf` to the directory to write test data into
@@ -102,7 +100,7 @@ fn make_test_project(
 
 </Project>
 "#,
-        runtime.name().to_camel_case(),
+        runtime.name().to_upper_camel_case(),
         library_name
     )?;
     Ok(test_dir)
@@ -190,7 +188,7 @@ namespace Testing {{
             .map(|x| format!("{}", *x))
             .collect::<Vec<_>>()
             .join(", "),
-        runtime.name().to_camel_case(),
+        runtime.name().to_upper_camel_case(),
     )
     .unwrap();
 
@@ -319,7 +317,7 @@ namespace Testing {{
 }}"#,
         positive_encodings,
         negative_encodings,
-        runtime.name().to_camel_case()
+        runtime.name().to_upper_camel_case()
     )
     .unwrap();
 

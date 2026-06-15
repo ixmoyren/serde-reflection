@@ -6,7 +6,7 @@ use crate::{
     indent::{IndentConfig, IndentedWriter},
     CodeGeneratorConfig, Encoding,
 };
-use heck::{CamelCase, MixedCase, SnakeCase};
+use heck::{ToLowerCamelCase, ToSnakeCase, ToUpperCamelCase};
 use include_dir::include_dir as include_directory;
 use serde_reflection::{ContainerFormat, Format, FormatHolder, Named, Registry, VariantFormat};
 use std::{
@@ -289,7 +289,7 @@ where
             _ => format!(
                 "{}.serialize{}({}, serializer);",
                 self.quote_qualified_name("TraitHelpers"),
-                common::mangle_type(format).to_camel_case(),
+                common::mangle_type(format).to_upper_camel_case(),
                 value
             ),
         }
@@ -324,7 +324,7 @@ where
             _ => format!(
                 "{}.deserialize{}(deserializer)",
                 self.quote_qualified_name("TraitHelpers"),
-                common::mangle_type(format).to_camel_case(),
+                common::mangle_type(format).to_upper_camel_case(),
             ),
         }
     }
@@ -375,7 +375,7 @@ where
         write!(
             self.out,
             "static void serialize{}({} value, BinarySerializer serializer) {{",
-            name.to_camel_case(),
+            name.to_upper_camel_case(),
             self.quote_type(format0)
         )?;
         self.out.indent();
@@ -461,7 +461,7 @@ for (final item in value) {{
             self.out,
             "static {} deserialize{}(BinaryDeserializer deserializer) {{",
             self.quote_type(format0),
-            name.to_camel_case(),
+            name.to_upper_camel_case(),
         )?;
         self.out.indent();
         match format0 {
@@ -639,7 +639,7 @@ return obj;
         )?;
         self.out.indent();
         for field in fields.iter() {
-            let field_name = self.quote_field(&field.name.to_mixed_case());
+            let field_name = self.quote_field(&field.name.to_lower_camel_case());
             match &field.value {
                 Format::Option(_) => writeln!(self.out, "this.{field_name},")?,
                 _ => writeln!(self.out, "required this.{field_name},")?,
@@ -684,7 +684,7 @@ return obj;
                 writeln!(
                     self.out,
                     "{}: {},",
-                    self.quote_field(&field.name.to_mixed_case()),
+                    self.quote_field(&field.name.to_lower_camel_case()),
                     self.quote_deserialize(&field.value)
                 )?;
             }
@@ -711,7 +711,7 @@ return obj;
                 self.out,
                 "final {} {};",
                 self.quote_type(&field.value),
-                self.quote_field(&field.name.to_mixed_case())
+                self.quote_field(&field.name.to_lower_camel_case())
             )?;
         }
         if !fields.is_empty() {
@@ -721,7 +721,7 @@ return obj;
             writeln!(self.out, "{cls_name} copyWith({{")?;
             self.out.indent();
             for field in fields {
-                let field_name = self.quote_field(&field.name.to_mixed_case());
+                let field_name = self.quote_field(&field.name.to_lower_camel_case());
                 let field_type = self.quote_type(&field.value);
 
                 match field.value {
@@ -738,7 +738,7 @@ return obj;
             self.out.indent();
 
             for field in fields {
-                let field_name = self.quote_field(&field.name.to_mixed_case());
+                let field_name = self.quote_field(&field.name.to_lower_camel_case());
 
                 match field.value {
                     Format::Option(_) => writeln!(
@@ -767,7 +767,7 @@ return obj;
                     self.out,
                     "{}",
                     self.quote_serialize_value(
-                        &self.quote_field(&field.name.to_mixed_case()),
+                        &self.quote_field(&field.name.to_lower_camel_case()),
                         &field.value
                     )
                 )?;
@@ -809,7 +809,7 @@ return obj;
                 Format::Seq(_) => {
                     format!(
                         "listEquals({0}, other.{0})",
-                        self.quote_field(&field.name.to_mixed_case())
+                        self.quote_field(&field.name.to_lower_camel_case())
                     )
                 }
                 Format::TupleArray {
@@ -817,17 +817,17 @@ return obj;
                     size: _,
                 } => format!(
                     "listEquals({0}, other.{0})",
-                    self.quote_field(&field.name.to_mixed_case())
+                    self.quote_field(&field.name.to_lower_camel_case())
                 ),
                 Format::Map { .. } => {
                     format!(
                         "mapEquals({0}, other.{0})",
-                        self.quote_field(&field.name.to_mixed_case())
+                        self.quote_field(&field.name.to_lower_camel_case())
                     )
                 }
                 _ => format!(
                     "{0} == other.{0}",
-                    self.quote_field(&field.name.to_mixed_case())
+                    self.quote_field(&field.name.to_lower_camel_case())
                 ),
             };
 
@@ -847,7 +847,7 @@ return obj;
             writeln!(
                 self.out,
                 "\nint get hashCode => {}.hashCode;",
-                fields.first().unwrap().name.to_mixed_case()
+                fields.first().unwrap().name.to_lower_camel_case()
             )?;
         } else {
             let use_hash_all = field_count > 20;
@@ -866,7 +866,7 @@ return obj;
                 writeln!(
                     self.out,
                     "{},",
-                    self.quote_field(&field.name.to_mixed_case())
+                    self.quote_field(&field.name.to_lower_camel_case())
                 )?;
             }
 
@@ -895,13 +895,13 @@ return obj;
                 writeln!(
                     self.out,
                     "'{0}: ${0}'",
-                    self.quote_field(&field.name.to_mixed_case())
+                    self.quote_field(&field.name.to_lower_camel_case())
                 )?;
             } else {
                 writeln!(
                     self.out,
                     "'{0}: ${0}, '",
-                    self.quote_field(&field.name.to_mixed_case())
+                    self.quote_field(&field.name.to_lower_camel_case())
                 )?;
             }
         }
@@ -930,7 +930,7 @@ Uint8List {0}Serialize() {{
     return serializer.bytes;
 }}"#,
             encoding.name(),
-            encoding.name().to_camel_case(),
+            encoding.name().to_upper_camel_case(),
         )
     }
 
@@ -953,7 +953,7 @@ static {klass} {encoding}Deserialize(Uint8List input) {{
             klass = self.quote_qualified_name(name),
             static_class = self.quote_qualified_name(&self.get_class(name)),
             encoding = encoding.name(),
-            encoding_class = encoding.name().to_camel_case()
+            encoding_class = encoding.name().to_upper_camel_case()
         )
     }
 
@@ -971,7 +971,7 @@ static {klass} {encoding}Deserialize(Uint8List input) {{
             writeln!(
                 self.out,
                 "{},",
-                self.quote_field(&variant.name.to_mixed_case())
+                self.quote_field(&variant.name.to_lower_camel_case())
             )?;
         }
 
@@ -1005,7 +1005,7 @@ switch (index) {{"#,
                     "case {}: return {}.{};",
                     index,
                     self.quote_qualified_name(name),
-                    self.quote_field(&variant.name.to_mixed_case()),
+                    self.quote_field(&variant.name.to_lower_camel_case()),
                 )?;
             }
             writeln!(
@@ -1032,7 +1032,7 @@ switch (this) {{"#,
                     self.out,
                     "case {}.{}: return serializer.serializeVariantIndex({});",
                     self.quote_qualified_name(name),
-                    self.quote_field(&variant.name.to_mixed_case()),
+                    self.quote_field(&variant.name.to_lower_camel_case()),
                     index,
                 )?;
             }
@@ -1092,7 +1092,7 @@ switch (index) {{"#,
                     self.out,
                     "case {}: return {}{}.load(deserializer);",
                     index,
-                    self.quote_qualified_name(name).to_camel_case(),
+                    self.quote_qualified_name(name).to_upper_camel_case(),
                     self.quote_field(&variant.name),
                 )?;
             }
@@ -1255,17 +1255,23 @@ impl crate::SourceInstaller for Installer {
     }
 
     fn install_serde_runtime(&self) -> std::result::Result<(), Self::Error> {
-        self.install_runtime(include_directory!("runtime/dart/serde"), "lib/src/serde")
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/dart/serde"),
+            "lib/src/serde",
+        )
     }
 
     fn install_bincode_runtime(&self) -> std::result::Result<(), Self::Error> {
         self.install_runtime(
-            include_directory!("runtime/dart/bincode"),
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/dart/bincode"),
             "lib/src/bincode",
         )
     }
 
     fn install_bcs_runtime(&self) -> std::result::Result<(), Self::Error> {
-        self.install_runtime(include_directory!("runtime/dart/bcs"), "lib/src/bcs")
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/dart/bcs"),
+            "lib/src/bcs",
+        )
     }
 }

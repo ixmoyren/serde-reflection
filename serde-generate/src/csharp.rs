@@ -6,7 +6,7 @@ use crate::{
     indent::{IndentConfig, IndentedWriter},
     CodeGeneratorConfig, Encoding,
 };
-use heck::CamelCase;
+use heck::ToUpperCamelCase;
 use include_dir::include_dir as include_directory;
 use serde_reflection::{ContainerFormat, Format, FormatHolder, Named, Registry, VariantFormat};
 use std::{
@@ -392,7 +392,7 @@ using System.Numerics;"
         match format {
             TypeName(name) => {
                 if self.cstyle_enum_names.contains(name) {
-                    let extensions_name = format!("{}Extensions", name.to_camel_case());
+                    let extensions_name = format!("{}Extensions", name.to_upper_camel_case());
                     format!(
                         "{}.Deserialize(deserializer)",
                         self.quote_qualified_name(&extensions_name)
@@ -1001,7 +1001,7 @@ switch (index) {{"#,
         writeln!(self.out, "}}")?;
 
         if self.generator.config.serialization {
-            let ext_name = format!("{}Extensions", name.to_camel_case());
+            let ext_name = format!("{}Extensions", name.to_upper_camel_case());
             writeln!(self.out, "public static class {ext_name} {{")?;
             self.enter_class(&ext_name, &[]);
 
@@ -1034,7 +1034,7 @@ public static byte[] {0}Serialize(this {1} value)  {{
     Serialize(value, serializer);
     return serializer.get_bytes();
 }}"#,
-                    encoding.name().to_camel_case(),
+                    encoding.name().to_upper_camel_case(),
                     name
                 )?;
                 self.output_class_deserialize_for_encoding(name, *encoding)?;
@@ -1064,7 +1064,7 @@ public byte[] {0}Serialize()  {{
     Serialize(serializer);
     return serializer.get_bytes();
 }}"#,
-            encoding.name().to_camel_case()
+            encoding.name().to_upper_camel_case()
         )
     }
 
@@ -1090,7 +1090,7 @@ public static {0} {1}Deserialize(ArraySegment<byte> input) {{
     return value;
 }}"#,
             name,
-            encoding.name().to_camel_case()
+            encoding.name().to_upper_camel_case()
         )
     }
 
@@ -1174,7 +1174,7 @@ impl crate::SourceInstaller for Installer {
             .repeat(dir_path.strip_prefix(&self.install_dir)?.iter().count());
         let mut deps = vec!["Serde".to_string()];
         for encoding in &config.encodings {
-            deps.push(encoding.name().to_camel_case());
+            deps.push(encoding.name().to_upper_camel_case());
         }
         let mut dependencies = String::new();
         for dep in deps {
@@ -1207,14 +1207,23 @@ impl crate::SourceInstaller for Installer {
     }
 
     fn install_serde_runtime(&self) -> std::result::Result<(), Self::Error> {
-        self.install_runtime(include_directory!("runtime/csharp/Serde"), "Serde")
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/csharp/Serde"),
+            "Serde",
+        )
     }
 
     fn install_bincode_runtime(&self) -> std::result::Result<(), Self::Error> {
-        self.install_runtime(include_directory!("runtime/csharp/Bincode"), "Bincode")
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/csharp/Bincode"),
+            "Bincode",
+        )
     }
 
     fn install_bcs_runtime(&self) -> std::result::Result<(), Self::Error> {
-        self.install_runtime(include_directory!("runtime/csharp/Bcs"), "Bcs")
+        self.install_runtime(
+            include_directory!("$CARGO_MANIFEST_DIR/runtime/csharp/Bcs"),
+            "Bcs",
+        )
     }
 }

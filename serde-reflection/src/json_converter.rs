@@ -82,14 +82,14 @@ pub struct DeserializationContext<'a, E> {
     pub environment: &'a E,
 }
 
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use std::{collections::HashSet, sync::Mutex};
 
-static GLOBAL_STRING_SET: Lazy<Mutex<HashSet<&'static str>>> =
-    Lazy::new(|| Mutex::new(HashSet::new()));
+static GLOBAL_STRING_SET: LazyLock<Mutex<HashSet<&'static str>>> =
+    LazyLock::new(|| Mutex::new(HashSet::new()));
 
-static GLOBAL_FIELDS_SET: Lazy<Mutex<HashSet<&'static [&'static str]>>> =
-    Lazy::new(|| Mutex::new(HashSet::new()));
+static GLOBAL_FIELDS_SET: LazyLock<Mutex<HashSet<&'static [&'static str]>>> =
+    LazyLock::new(|| Mutex::new(HashSet::new()));
 
 /// The requirement for an `environment` that manages a symbol table.
 pub trait SymbolTableEnvironment {
