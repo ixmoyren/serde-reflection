@@ -547,13 +547,13 @@ return obj
             "\npublic init({}) {{",
             fields
                 .iter()
-                .map(|f| format!("{}: {}", &f.name, self.quote_type(&f.value)))
+                .map(|f| format!("{}: {}", f.name, self.quote_type(&f.value)))
                 .collect::<Vec<_>>()
                 .join(", ")
         )?;
         self.out.indent();
         for field in fields {
-            writeln!(self.out, "self.{0} = {0}", &field.name)?;
+            writeln!(self.out, "self.{0} = {0}", field.name)?;
         }
         self.out.unindent();
         writeln!(self.out, "}}")?;
@@ -569,7 +569,7 @@ return obj
                 writeln!(
                     self.out,
                     "{}",
-                    self.quote_serialize_value(&format!("self.{}", &field.name), &field.value)
+                    self.quote_serialize_value(&format!("self.{}", field.name), &field.value)
                 )?;
             }
             writeln!(self.out, "try serializer.decrease_container_depth()")?;
@@ -603,7 +603,7 @@ return obj
                 name,
                 fields
                     .iter()
-                    .map(|f| format!("{0}: {0}", &f.name))
+                    .map(|f| format!("{0}: {0}", f.name))
                     .collect::<Vec<_>>()
                     .join(", ")
             )?;

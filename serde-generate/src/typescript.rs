@@ -534,7 +534,7 @@ return list;
             "constructor ({}) {{",
             fields
                 .iter()
-                .map(|f| { format!("public {}: {}", &f.name, self.quote_type(&f.value)) })
+                .map(|f| { format!("public {}: {}", f.name, self.quote_type(&f.value)) })
                 .collect::<Vec<_>>()
                 .join(", ")
         )?;

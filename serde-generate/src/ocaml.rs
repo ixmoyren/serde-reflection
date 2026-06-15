@@ -61,7 +61,7 @@ impl<'a> CodeGenerator<'a> {
             let last = i == n - 1;
             emitter.output_container(name, format, first, last)?;
         }
-        for (name, _) in registry.iter() {
+        for name in registry.keys() {
             emitter.output_custom_code(name)?;
         }
         Ok(())

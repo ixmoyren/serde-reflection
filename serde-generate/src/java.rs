@@ -637,7 +637,7 @@ return obj;
             name,
             fields
                 .iter()
-                .map(|f| format!("{} {}", self.quote_type(&f.value), &f.name))
+                .map(|f| format!("{} {}", self.quote_type(&f.value), f.name))
                 .collect::<Vec<_>>()
                 .join(", ")
         )?;
@@ -646,11 +646,11 @@ return obj;
             writeln!(
                 self.out,
                 "java.util.Objects.requireNonNull({0}, \"{0} must not be null\");",
-                &field.name
+                field.name
             )?;
         }
         for field in fields {
-            writeln!(self.out, "this.{} = {};", &field.name, &field.name)?;
+            writeln!(self.out, "this.{} = {};", field.name, field.name)?;
         }
         self.out.unindent();
         writeln!(self.out, "}}")?;
@@ -732,7 +732,7 @@ if (getClass() != obj.getClass()) return false;
             writeln!(
                 self.out,
                 "if (!java.util.Objects.equals(this.{0}, other.{0})) {{ return false; }}",
-                &field.name,
+                field.name,
             )?;
         }
         writeln!(self.out, "return true;")?;
@@ -746,7 +746,7 @@ if (getClass() != obj.getClass()) return false;
             writeln!(
                 self.out,
                 "value = 31 * value + (this.{0} != null ? this.{0}.hashCode() : 0);",
-                &field.name
+                field.name
             )?;
         }
         writeln!(self.out, "return value;")?;

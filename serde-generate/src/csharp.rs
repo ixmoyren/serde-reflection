@@ -717,7 +717,7 @@ return new Serde.ValueArray<{0}>(obj);
             name,
             fields
                 .iter()
-                .map(|f| format!("{} _{}", self.quote_type(&f.value), &f.name))
+                .map(|f| format!("{} _{}", self.quote_type(&f.value), f.name))
                 .collect::<Vec<_>>()
                 .join(", ")
         )?;
@@ -727,10 +727,10 @@ return new Serde.ValueArray<{0}>(obj);
                 writeln!(
                     self.out,
                     "if (_{0} == null) throw new ArgumentNullException(nameof(_{0}));",
-                    &field.name
+                    field.name
                 )?;
             }
-            writeln!(self.out, "{0} = _{0};", &field.name)?;
+            writeln!(self.out, "{0} = _{0};", field.name)?;
         }
         self.out.unindent();
         writeln!(self.out, "}}")?;
@@ -822,7 +822,7 @@ return new Serde.ValueArray<{0}>(obj);
             writeln!(
                 self.out,
                 "if (!{0}.Equals(other.{0})) return false;",
-                &field.name,
+                field.name,
             )?;
         }
         writeln!(self.out, "return true;")?;
@@ -839,7 +839,7 @@ return new Serde.ValueArray<{0}>(obj);
             writeln!(
                 self.out,
                 "value = 31 * value + {0}.GetHashCode();",
-                &field.name
+                field.name
             )?;
         }
         writeln!(self.out, "return value;")?;

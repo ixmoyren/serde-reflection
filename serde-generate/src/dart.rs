@@ -1130,7 +1130,7 @@ switch (index) {{"#,
             self.output_variant(
                 base,
                 *index,
-                &format!("{}{}", base, &variant.name),
+                &format!("{}{}", base, variant.name),
                 &variant.value,
             )?;
         }
@@ -1244,10 +1244,10 @@ impl crate::SourceInstaller for Installer {
         std::fs::write(
             self.install_dir
                 .join("lib")
-                .join(format!("{}.dart", &config.module_name)),
+                .join(format!("{}.dart", config.module_name)),
             format!(
                 "export 'src/{name}/{name}.dart';",
-                name = &config.module_name
+                name = config.module_name
             ),
         )?;
 

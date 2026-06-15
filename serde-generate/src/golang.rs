@@ -639,7 +639,7 @@ return obj, nil
                 writeln!(
                     self.out,
                     "{}",
-                    self.quote_serialize_value(&format!("obj.{}", &field.name), &field.value)
+                    self.quote_serialize_value(&format!("obj.{}", field.name), &field.value)
                 )?;
             }
             writeln!(self.out, "serializer.DecreaseContainerDepth()")?;
