@@ -120,8 +120,8 @@ fn test_tracers() {
     let format2 = serde_json::from_str::<ContainerFormat>(&data).unwrap();
     assert_eq!(*format, format2);
 
-    let data = serde_yaml::to_string(format).unwrap();
-    let format3 = serde_yaml::from_str::<ContainerFormat>(&data).unwrap();
+    let data = serde_saphyr::to_string(format).unwrap();
+    let format3 = serde_saphyr::from_str::<ContainerFormat>(&data).unwrap();
     assert_eq!(*format, format3);
 
     let data = bincode::serialize(format).unwrap();
