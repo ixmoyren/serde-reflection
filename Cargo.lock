@@ -2806,6 +2806,7 @@ dependencies = [
     "serde-saphyr",
     "serde_bytes",
     "serde_json",
+    "similar-asserts",
     "thiserror",
     "typeid",
 ]

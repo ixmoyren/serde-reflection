@@ -55,7 +55,7 @@
 //!         compact_list_indent: false,
 //!  };
 //! let data = serde_saphyr::to_string_with_options(&registry, option).unwrap();
-//! assert_eq!(&data, r#"Bar:
+//! similar_asserts::assert_eq!(&data, r#"Bar:
 //!   NEWTYPESTRUCT: U64
 //! Choice:
 //!   ENUM:
@@ -221,8 +221,8 @@
 //! let option = serde_saphyr::ser_options! {
 //!         compact_list_indent: false,
 //!  };
-//! let data = serde_saphyr::to_string(&registry).unwrap();
-//! assert_eq!(&data, r#"Name:
+//! let data = serde_saphyr::to_string_with_options(&registry, option).unwrap();
+//! similar_asserts::assert_eq!(&data, r#"Name:
 //!   NEWTYPESTRUCT: STR
 //! Person:
 //!   ENUM:
