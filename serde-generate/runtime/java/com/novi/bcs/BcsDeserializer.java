@@ -22,7 +22,7 @@ public class BcsDeserializer extends BinaryDeserializer {
 
     private int deserialize_uleb128_as_u32() throws DeserializationError {
         long value = 0;
-        for (int shift = 0; shift < 32; shift += 7) {
+        for (var shift = 0; shift < 32; shift += 7) {
             byte x = getByte();
             byte digit = (byte) (x & 0x7F);
             value = value | ((long)digit << shift);

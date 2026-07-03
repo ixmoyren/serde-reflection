@@ -12,11 +12,11 @@ public class BincodeSerializer extends BinarySerializer {
     }
 
     public void serialize_f32(Float value) throws SerializationError {
-        serialize_i32(Integer.valueOf(Float.floatToRawIntBits(value.floatValue())));
+        serialize_i32(Float.floatToRawIntBits(value));
     }
 
     public void serialize_f64(Double value) throws SerializationError {
-        serialize_i64(Long.valueOf(Double.doubleToRawLongBits(value.doubleValue())));
+        serialize_i64(Double.doubleToRawLongBits(value));
     }
 
     public void serialize_len(long value) throws SerializationError {

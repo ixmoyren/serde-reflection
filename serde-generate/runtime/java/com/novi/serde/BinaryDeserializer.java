@@ -32,38 +32,38 @@ public abstract class BinaryDeserializer implements Deserializer {
     }
 
     public String deserialize_str() throws DeserializationError {
-        long len = deserialize_len();
+        var len = deserialize_len();
         if (len < 0 || len > Integer.MAX_VALUE) {
             throw new DeserializationError("Incorrect length value for Java string");
         }
-        byte[] content = new byte[(int) len];
+        var content = new byte[(int) len];
         read(content);
-        CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
+        var decoder = StandardCharsets.UTF_8.newDecoder();
         try {
             decoder.decode(ByteBuffer.wrap(content));
-        } catch (CharacterCodingException ex) {
+        } catch (CharacterCodingException _) {
             throw new DeserializationError("Incorrect UTF8 string");
         }
         return new String(content);
     }
 
     public Bytes deserialize_bytes() throws DeserializationError {
-        long len = deserialize_len();
+        var len = deserialize_len();
         if (len < 0 || len > Integer.MAX_VALUE) {
             throw new DeserializationError("Incorrect length value for Java array");
         }
-        byte[] content = new byte[(int) len];
+        var content = new byte[(int) len];
         read(content);
         return new Bytes(content);
     }
 
     public Boolean deserialize_bool() throws DeserializationError {
-        byte value = getByte();
+        var value = getByte();
         if (value == 0) {
-            return Boolean.valueOf(false);
+            return false;
         }
         if (value == 1) {
-            return Boolean.valueOf(true);
+            return true;
         }
         throw new DeserializationError("Incorrect boolean value");
     }
@@ -77,23 +77,23 @@ public abstract class BinaryDeserializer implements Deserializer {
     }
 
     public @Unsigned Byte deserialize_u8() throws DeserializationError {
-        return Byte.valueOf(getByte());
+        return getByte();
     }
 
     public @Unsigned Short deserialize_u16() throws DeserializationError {
-        return Short.valueOf(getShort());
+        return getShort();
     }
 
     public @Unsigned Integer deserialize_u32() throws DeserializationError {
-        return Integer.valueOf(getInt());
+        return getInt();
     }
 
     public @Unsigned Long deserialize_u64() throws DeserializationError {
-        return Long.valueOf(getLong());
+        return getLong();
     }
 
     public @Unsigned @Int128 BigInteger deserialize_u128() throws DeserializationError {
-        BigInteger signed = deserialize_i128();
+        var signed = deserialize_i128();
         if (signed.compareTo(BigInteger.ZERO) >= 0) {
             return signed;
         } else {
@@ -102,33 +102,33 @@ public abstract class BinaryDeserializer implements Deserializer {
     }
 
     public Byte deserialize_i8() throws DeserializationError {
-        return Byte.valueOf(getByte());
+        return getByte();
     }
 
     public Short deserialize_i16() throws DeserializationError {
-        return Short.valueOf(getShort());
+        return getShort();
     }
 
     public Integer deserialize_i32() throws DeserializationError {
-        return Integer.valueOf(getInt());
+        return getInt();
     }
 
     public Long deserialize_i64() throws DeserializationError {
-        return Long.valueOf(getLong());
+        return getLong();
     }
 
     public @Int128 BigInteger deserialize_i128() throws DeserializationError {
-        byte[] content = new byte[16];
+        var content = new byte[16];
         read(content);
-        byte[] reversed = new byte[16];
-        for (int i = 0; i < 16; i++) {
+        var reversed = new byte[16];
+        for (var i = 0; i < 16; i++) {
             reversed[i] = content[15 - i];
         }
         return new BigInteger(reversed);
     }
 
     public boolean deserialize_option_tag() throws DeserializationError {
-        return deserialize_bool().booleanValue();
+        return deserialize_bool();
     }
 
     public int get_buffer_offset() {
@@ -140,7 +140,7 @@ public abstract class BinaryDeserializer implements Deserializer {
     protected byte getByte()  throws DeserializationError {
         try {
             return input.get();
-        } catch (java.nio.BufferUnderflowException e) {
+        } catch (java.nio.BufferUnderflowException _) {
             throw new DeserializationError(INPUT_NOT_LARGE_ENOUGH);
         }
     }
@@ -148,7 +148,7 @@ public abstract class BinaryDeserializer implements Deserializer {
     protected short getShort()  throws DeserializationError {
         try {
             return input.getShort();
-        } catch (java.nio.BufferUnderflowException e) {
+        } catch (java.nio.BufferUnderflowException _) {
             throw new DeserializationError(INPUT_NOT_LARGE_ENOUGH);
         }
     }
@@ -156,7 +156,7 @@ public abstract class BinaryDeserializer implements Deserializer {
     protected int getInt()  throws DeserializationError {
         try {
             return input.getInt();
-        } catch (java.nio.BufferUnderflowException e) {
+        } catch (java.nio.BufferUnderflowException _) {
             throw new DeserializationError(INPUT_NOT_LARGE_ENOUGH);
         }
     }
@@ -164,7 +164,7 @@ public abstract class BinaryDeserializer implements Deserializer {
     protected long getLong()  throws DeserializationError {
         try {
             return input.getLong();
-        } catch (java.nio.BufferUnderflowException e) {
+        } catch (java.nio.BufferUnderflowException _) {
             throw new DeserializationError(INPUT_NOT_LARGE_ENOUGH);
         }
     }
@@ -172,7 +172,7 @@ public abstract class BinaryDeserializer implements Deserializer {
     protected float getFloat()  throws DeserializationError {
         try {
             return input.getFloat();
-        } catch (java.nio.BufferUnderflowException e) {
+        } catch (java.nio.BufferUnderflowException _) {
             throw new DeserializationError(INPUT_NOT_LARGE_ENOUGH);
         }
     }
@@ -180,7 +180,7 @@ public abstract class BinaryDeserializer implements Deserializer {
     protected double getDouble()  throws DeserializationError {
         try {
             return input.getDouble();
-        } catch (java.nio.BufferUnderflowException e) {
+        } catch (java.nio.BufferUnderflowException _) {
             throw new DeserializationError(INPUT_NOT_LARGE_ENOUGH);
         }
     }
@@ -188,7 +188,7 @@ public abstract class BinaryDeserializer implements Deserializer {
     protected void read(byte[] content)  throws DeserializationError {
         try {
             input.get(content);
-        } catch (java.nio.BufferUnderflowException e) {
+        } catch (java.nio.BufferUnderflowException _) {
             throw new DeserializationError(INPUT_NOT_LARGE_ENOUGH);
         }
     }

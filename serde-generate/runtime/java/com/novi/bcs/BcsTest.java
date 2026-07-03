@@ -6,12 +6,11 @@ package com.novi.bcs;
 import java.util.Arrays;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
-import java.lang.Runnable;
 
 public class BcsTest {
 
     static void test_serialize_u128() throws Exception {
-        BcsSerializer serializer = new BcsSerializer();
+        var serializer = new BcsSerializer();
         serializer.serialize_u128(BigInteger.ONE.shiftLeft(128).subtract(BigInteger.ONE));
         assert Arrays.equals(serializer.get_bytes(), new byte[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1});
 
@@ -26,16 +25,16 @@ public class BcsTest {
         try {
             serializer.serialize_u128(BigInteger.ONE.negate());
             assert false;
-        } catch (java.lang.IllegalArgumentException e) { /* all good */  }
+        } catch (IllegalArgumentException _) { /* all good */  }
 
         try {
             serializer.serialize_u128(BigInteger.ONE.shiftLeft(128).add(BigInteger.ONE));
             assert false;
-        } catch (java.lang.IllegalArgumentException e) { /* all good */  }
+        } catch (IllegalArgumentException _) { /* all good */  }
     }
 
     static void test_serialize_i128() throws Exception {
-        BcsSerializer serializer = new BcsSerializer();
+        var serializer = new BcsSerializer();
         serializer.serialize_i128(BigInteger.ONE.negate());
         assert Arrays.equals(serializer.get_bytes(), new byte[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1});
 
@@ -54,16 +53,16 @@ public class BcsTest {
         try {
             serializer.serialize_i128(BigInteger.ONE.shiftLeft(127));
             assert false;
-        } catch (java.lang.IllegalArgumentException e) { /* all good */  }
+        } catch (IllegalArgumentException _) { /* all good */  }
 
         try {
             serializer.serialize_i128(BigInteger.ONE.shiftLeft(127).add(BigInteger.ONE).negate());
             assert false;
-        } catch (java.lang.IllegalArgumentException e) { /* all good */  }
+        } catch (IllegalArgumentException _) { /* all good */  }
     }
 
     static void test_serializer_slice_ordering() throws Exception {
-        BcsSerializer serializer = new BcsSerializer();
+        var serializer = new BcsSerializer();
 
         serializer.serialize_u8((byte) -1);
         serializer.serialize_u32(1);
@@ -77,7 +76,7 @@ public class BcsTest {
     }
 
     public static void main(String[] args) throws Exception {
-        for (Method method : BcsTest.class.getDeclaredMethods()) {
+        for (var method : BcsTest.class.getDeclaredMethods()) {
             if (method.getName().startsWith("test_")) {
                 method.invoke(null);
             }

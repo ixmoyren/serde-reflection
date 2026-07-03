@@ -3,14 +3,7 @@
 
 package com.novi.serde;
 
-public final class Slice {
-    public final int start;
-    public final int end;
-
-    public Slice(int start, int end) {
-        this.start = start;
-        this.end = end;
-    }
+public record Slice(int start, int end) {
 
     // Lexicographic comparison between the (unsigned!) bytes referenced by `slice1` and `slice2`
     // into `content`.

@@ -384,7 +384,8 @@ if (value.isPresent()) {{
                 write!(
                     self.out,
                     r#"
-serializer.serialize_len(value.size());
+var length = value.size();
+serializer.serialize_len(length);
 for ({} item : value) {{
     {}
 }}
@@ -399,8 +400,8 @@ for ({} item : value) {{
                     self.out,
                     r#"
 serializer.serialize_len(value.size());
-int[] offsets = new int[value.size()];
-int count = 0;
+var offsets = new int[value.size()];
+var count = 0;
 for (java.util.Map.Entry<{}, {}> entry : value.entrySet()) {{
     offsets[count++] = serializer.get_buffer_offset();
     {}
@@ -418,7 +419,7 @@ serializer.sort_map_entries(offsets);
             Tuple(formats) => {
                 writeln!(self.out)?;
                 for (index, format) in formats.iter().enumerate() {
-                    let expr = format!("value.field{index}");
+                    let expr = format!("value.field{}()", index);
                     writeln!(self.out, "{}", self.quote_serialize_value(&expr, format))?;
                 }
             }
@@ -461,7 +462,7 @@ for ({1} item : value) {{
                 write!(
                     self.out,
                     r#"
-boolean tag = deserializer.deserialize_option_tag();
+var tag = deserializer.deserialize_option_tag();
 if (!tag) {{
     return java.util.Optional.empty();
 }} else {{
@@ -476,9 +477,9 @@ if (!tag) {{
                 write!(
                     self.out,
                     r#"
-long length = deserializer.deserialize_len();
+var length = deserializer.deserialize_len();
 java.util.List<{0}> obj = new java.util.ArrayList<{0}>((int) length);
-for (long i = 0; i < length; i++) {{
+for (var i = 0L; i < length; i++) {{
     obj.add({1});
 }}
 return obj;
@@ -492,14 +493,14 @@ return obj;
                 write!(
                     self.out,
                     r#"
-long length = deserializer.deserialize_len();
+var length = deserializer.deserialize_len();
 java.util.Map<{0}, {1}> obj = new java.util.HashMap<{0}, {1}>();
-int previous_key_start = 0;
-int previous_key_end = 0;
-for (long i = 0; i < length; i++) {{
-    int key_start = deserializer.get_buffer_offset();
+var previous_key_start = 0;
+var previous_key_end = 0;
+for (var i = 0L; i < length; i++) {{
+    var key_start = deserializer.get_buffer_offset();
     {0} key = {2};
-    int key_end = deserializer.get_buffer_offset();
+    var key_end = deserializer.get_buffer_offset();
     if (i > 0) {{
         deserializer.check_that_key_slices_are_increasing(
             new com.novi.serde.Slice(previous_key_start, previous_key_end),
@@ -540,7 +541,7 @@ return new {}({}
                     self.out,
                     r#"
 java.util.List<{0}> obj = new java.util.ArrayList<{0}>({1});
-for (long i = 0; i < {1}; i++) {{
+for (var i = 0L; i < {1}; i++) {{
     obj.add({2});
 }}
 return obj;
@@ -720,36 +721,40 @@ return obj;
         // Equality
         write!(self.out, "\npublic boolean equals(Object obj) {{")?;
         self.out.indent();
-        writeln!(
-            self.out,
-            r#"
-if (this == obj) return true;
-if (obj == null) return false;
-if (getClass() != obj.getClass()) return false;
-{name} other = ({name}) obj;"#,
-        )?;
-        for field in fields {
+        writeln!(self.out)?;
+        writeln!(self.out, "if (this == obj) return true;")?;
+        if fields.is_empty() {
+            writeln!(self.out, "if (!(obj instanceof {name})) return false;")?;
+            writeln!(self.out, "return true;")?;
+        } else {
             writeln!(
                 self.out,
-                "if (!java.util.Objects.equals(this.{0}, other.{0})) {{ return false; }}",
-                field.name,
+                "if (!(obj instanceof {name} other)) return false;"
             )?;
+            for field in fields {
+                writeln!(
+                    self.out,
+                    "if (!java.util.Objects.equals(this.{0}, other.{0})) {{ return false; }}",
+                    field.name,
+                )?;
+            }
+            writeln!(self.out, "return true;")?;
         }
-        writeln!(self.out, "return true;")?;
         self.out.unindent();
         writeln!(self.out, "}}")?;
         // Hashing
         writeln!(self.out, "\npublic int hashCode() {{")?;
         self.out.indent();
-        writeln!(self.out, "int value = 7;",)?;
-        for field in fields {
-            writeln!(
-                self.out,
-                "value = 31 * value + (this.{0} != null ? this.{0}.hashCode() : 0);",
-                field.name
-            )?;
+        if fields.is_empty() {
+            writeln!(self.out, "return 7;")?;
+        } else {
+            let field_list = fields
+                .iter()
+                .map(|f| format!("this.{}", f.name))
+                .collect::<Vec<_>>()
+                .join(", ");
+            writeln!(self.out, "return java.util.Objects.hash({field_list});")?;
         }
-        writeln!(self.out, "return value;")?;
         self.out.unindent();
         writeln!(self.out, "}}")?;
         // Builder
@@ -830,7 +835,7 @@ if (getClass() != obj.getClass()) return false;
             writeln!(
                 self.out,
                 r#"
-int index = deserializer.deserialize_variant_index();
+var index = deserializer.deserialize_variant_index();
 switch (index) {{"#,
             )?;
             self.out.indent();

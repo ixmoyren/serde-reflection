@@ -13,15 +13,15 @@ public class BincodeDeserializer extends BinaryDeserializer {
     }
 
     public Float deserialize_f32() throws DeserializationError {
-        return Float.valueOf(getFloat());
+        return getFloat();
     }
 
     public Double deserialize_f64() throws DeserializationError {
-        return Double.valueOf(getDouble());
+        return getDouble();
     }
 
     public long deserialize_len() throws DeserializationError {
-        long value = getLong();
+        var value = getLong();
         if (value < 0 || value > Integer.MAX_VALUE) {
             throw new DeserializationError("Incorrect length value");
         }

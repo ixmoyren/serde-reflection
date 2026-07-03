@@ -3,6 +3,8 @@
 
 package com.novi.bcs;
 
+import java.util.Arrays;
+
 import com.novi.serde.SerializationError;
 import com.novi.serde.Slice;
 import com.novi.serde.BinarySerializer;
@@ -46,28 +48,23 @@ public class BcsSerializer extends BinarySerializer {
         if (offsets.length <= 1) {
             return;
         }
-        int offset0 = offsets[0];
-        byte[] content = output.getBuffer();
-        Slice[] slices = new Slice[offsets.length];
-        for (int i = 0; i < offsets.length - 1; i++) {
+        var offset0 = offsets[0];
+        var content = output.getBuffer();
+        var slices = new Slice[offsets.length];
+        for (var i = 0; i < offsets.length - 1; i++) {
             slices[i] = new Slice(offsets[i], offsets[i + 1]);
         }
         slices[offsets.length - 1] = new Slice(offsets[offsets.length - 1], output.size());
 
-        java.util.Arrays.sort(slices, new java.util.Comparator<Slice>() {
-            @Override
-            public int compare(Slice slice1, Slice slice2) {
-                return Slice.compare_bytes(content, slice1, slice2);
-            }
-        });
+        Arrays.sort(slices, (slice1, slice2) -> Slice.compare_bytes(content, slice1, slice2));
 
-        byte[] old_content = new byte[output.size() - offset0];
+        var old_content = new byte[output.size() - offset0];
         System.arraycopy(content, offset0, old_content, 0, output.size() - offset0);
 
-        int position = offset0;
-        for (int i = 0; i < offsets.length; i++) {
-            int start = slices[i].start;
-            int end = slices[i].end;
+        var position = offset0;
+        for (var i = 0; i < offsets.length; i++) {
+            var start = slices[i].start();
+            var end = slices[i].end();
             System.arraycopy(old_content, start - offset0, content, position, end - start);
             position += end - start;
         }

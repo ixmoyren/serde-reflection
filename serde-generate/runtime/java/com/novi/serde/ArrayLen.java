@@ -3,10 +3,10 @@
 
 package com.novi.serde;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+import static java.lang.annotation.ElementType.TYPE_USE;
 
-@Target({ElementType.TYPE_USE})
+@Target(TYPE_USE)
 public @interface ArrayLen {
     int length();
 }

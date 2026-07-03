@@ -10,7 +10,7 @@ public abstract class BinarySerializer implements Serializer {
     private long containerDepthBudget;
 
     public BinarySerializer(long maxContainerDepth) {
-        output = new BinarySerializer.MyByteArrayOutputStream();
+        output = new MyByteArrayOutputStream();
         containerDepthBudget = maxContainerDepth;
     }
 
@@ -36,7 +36,7 @@ public abstract class BinarySerializer implements Serializer {
     }
 
     public void serialize_bool(Boolean value) throws SerializationError {
-        output.write((value.booleanValue() ? 1 : 0));
+        output.write(value ? 1 : 0);
     }
 
     public void serialize_unit(Unit value) throws SerializationError {
@@ -47,17 +47,17 @@ public abstract class BinarySerializer implements Serializer {
     }
 
     public void serialize_u8(@Unsigned Byte value) throws SerializationError {
-        output.write(value.byteValue());
+        output.write(value);
     }
 
     public void serialize_u16(@Unsigned Short value) throws SerializationError {
-        short val = value.shortValue();
+        var val = value;
         output.write((byte) (val >>> 0));
         output.write((byte) (val >>> 8));
     }
 
     public void serialize_u32(@Unsigned Integer value) throws SerializationError {
-        int val = value.intValue();
+        var val = value;
         output.write((byte) (val >>> 0));
         output.write((byte) (val >>> 8));
         output.write((byte) (val >>> 16));
@@ -65,7 +65,7 @@ public abstract class BinarySerializer implements Serializer {
     }
 
     public void serialize_u64(@Unsigned Long value) throws SerializationError {
-        long val = value.longValue();
+        var val = value;
         output.write((byte) (val >>> 0));
         output.write((byte) (val >>> 8));
         output.write((byte) (val >>> 16));
@@ -78,19 +78,19 @@ public abstract class BinarySerializer implements Serializer {
 
     public void serialize_u128(@Unsigned @Int128 BigInteger value) throws SerializationError {
         if (value.compareTo(BigInteger.ZERO) < 0 || !value.shiftRight(128).equals(BigInteger.ZERO)) {
-            throw new java.lang.IllegalArgumentException("Invalid value for an unsigned int128");
+            throw new IllegalArgumentException("Invalid value for an unsigned int128");
         }
-        byte[] content = value.toByteArray();
+        var content = value.toByteArray();
         // BigInteger.toByteArray() may add a most-significant zero
         // byte for signing purpose: ignore it.
         assert content.length <= 16 || content[0] == 0;
-        int len = Math.min(content.length, 16);
+        var len = Math.min(content.length, 16);
         // Write content in little-endian order.
-        for (int i = 0; i < len; i++) {
+        for (var i = 0; i < len; i++) {
             output.write(content[content.length - 1 - i]);
         }
         // Complete with zeros if needed.
-        for (int i = len; i < 16; i++) {
+        for (var i = len; i < 16; i++) {
             output.write(0);
         }
     }
@@ -114,12 +114,12 @@ public abstract class BinarySerializer implements Serializer {
     public void serialize_i128(@Int128 BigInteger value) throws SerializationError {
         if (value.compareTo(BigInteger.ZERO) >= 0) {
             if (!value.shiftRight(127).equals(BigInteger.ZERO)) {
-                throw new java.lang.IllegalArgumentException("Invalid value for a signed int128");
+                throw new IllegalArgumentException("Invalid value for a signed int128");
             }
             serialize_u128(value);
         } else {
             if (!value.add(BigInteger.ONE).negate().shiftRight(127).equals(BigInteger.ZERO)) {
-                throw new java.lang.IllegalArgumentException("Invalid value for a signed int128");
+                throw new IllegalArgumentException("Invalid value for a signed int128");
             }
             serialize_u128(value.add(BigInteger.ONE.shiftLeft(128)));
         }
